@@ -2,14 +2,10 @@
 
 : ${REPLICA_URL?"Need to set REPLICA_URL environment variable"}
 
-# Evaluate environment variables in the Litestream config file.
-envsubst /etc/litestream.yml > /etc/litestream.yml.tmp
-mv /etc/litestream.yml.tmp /etc/litestream.yml
-
 # Restore the database if it does not already exist.
 if [ -f /data/db ]; then
 	echo "Database already exists, skipping restore"
 else
 	echo "No database found, restoring from replica if exists"
-	/usr/bin/litestream restore -v -if-replica-exists -o /data/db "${REPLICA_URL}"
+	litestream restore -v -if-replica-exists -o /data/db "${REPLICA_URL}"
 fi

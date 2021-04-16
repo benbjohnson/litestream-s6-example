@@ -11,31 +11,34 @@ WORKDIR /src/myapp
 # The mount options add the build cache to Docker to speed up multiple builds.
 RUN --mount=type=cache,target=/root/.cache/go-build \
 	--mount=type=cache,target=/go/pkg \
-	go build -ldflags '-w -extldflags "-static"' -o /usr/bin/myapp .
+	go build -ldflags '-w -extldflags "-static"' -o /usr/local/bin/myapp .
+
+# Download the static build of Litestream directly into the path & make it executable.
+# This is done in the builder and copied as the chmod doubles the size.
+ADD https://github.com/benbjohnson/litestream/releases/download/v0.3.4-alpha19/litestream-v0.3.4-alpha19-linux-amd64-static /usr/local/bin/litestream
+RUN chmod +x /usr/local/bin/litestream
+
+# Download the s6-overlay for process supervision.
+# This is done in the builder to reduce the final build size.
+ADD https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.3/s6-overlay-amd64-installer /tmp/
+RUN chmod +x /tmp/s6-overlay-amd64-installer
 
 
 # This starts our final image; based on alpine to make it small.
 FROM alpine
 
-# Install packages.
-RUN apk add gettext
-
 # You can optionally set the replica URL directly in the Dockerfile.
 # ENV REPLICA_URL=s3://BUCKETNAME/db
 
-# Download and install the s6-overlay for process supervision.
-ADD https://github.com/just-containers/s6-overlay/releases/download/v2.2.0.3/s6-overlay-amd64-installer /tmp/
-RUN apk upgrade --update && \
-	apk add bash && \
-	chmod +x /tmp/s6-overlay-amd64-installer && \
-	/tmp/s6-overlay-amd64-installer /
+# Copy executable & Litestream from builder.
+COPY --from=builder /usr/local/bin/myapp /usr/local/bin/myapp
+COPY --from=builder /usr/local/bin/litestream /usr/local/bin/litestream
 
-# Download the static build of Litestream directly into the path & make it executable.
-ADD https://github.com/benbjohnson/litestream/releases/download/v0.3.4-alpha18/litestream-v0.3.4-alpha18-linux-amd64-static /usr/bin/litestream
-RUN chmod +x /usr/bin/litestream
+# Install s6 for process supervision.
+COPY --from=builder /tmp/s6-overlay-amd64-installer /tmp/s6-overlay-amd64-installer
+RUN /tmp/s6-overlay-amd64-installer /
 
-# Copy executable from builder.
-COPY --from=builder /usr/bin/myapp /usr/bin/myapp
+RUN apk add bash
 
 # Create data directory (although this will likely be mounted too)
 RUN mkdir -p /data
