@@ -11,7 +11,7 @@ WORKDIR /src/myapp
 # The mount options add the build cache to Docker to speed up multiple builds.
 RUN --mount=type=cache,target=/root/.cache/go-build \
 	--mount=type=cache,target=/go/pkg \
-	go build -ldflags '-w -extldflags "-static"' -o /usr/local/bin/myapp .
+	go build -ldflags '-s -w -extldflags "-static"' -tags sqlite_omit_load_extension -o /usr/local/bin/myapp .
 
 # Download the static build of Litestream directly into the path & make it executable.
 # This is done in the builder and copied as the chmod doubles the size.
