@@ -1,2 +1,2 @@
 #!/usr/bin/with-contenv bash
-myapp -dsn /data/db
+exec myapp -dsn /data/db

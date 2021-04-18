@@ -1,11 +1,15 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"flag"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -22,6 +26,9 @@ func main() {
 }
 
 func run() error {
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGTERM)
+	defer stop()
+
 	// Parse command line flags.
 	dsn := flag.String("dsn", "", "datasource name")
 	flag.Parse()
@@ -44,7 +51,7 @@ func run() error {
 
 	// Run web server.
 	fmt.Printf("listening on %s\n", addr)
-	return http.ListenAndServe(addr,
+	go http.ListenAndServe(addr,
 		http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			// Store page view.
 			if _, err := db.Exec(`INSERT INTO page_views (timestamp) VALUES (?);`, time.Now().Format(time.RFC3339)); err != nil {
@@ -63,4 +70,10 @@ func run() error {
 			fmt.Fprintf(w, "This server has been visited %d times.\n", n)
 		}),
 	)
+
+	// Wait for signal.
+	<-ctx.Done()
+	log.Print("myapp received signal, shutting down")
+
+	return nil
 }
