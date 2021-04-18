@@ -53,6 +53,12 @@ COPY etc/services.d /etc/services.d
 # Copy Litestream configuration file.
 COPY etc/litestream.yml /etc/litestream.yml
 
+# The kill grace time is set to zero because our app handles shutdown through SIGTERM.
+ENV S6_KILL_GRACETIME=0
+
+# Sync disks is enabled so that data is properly flushed.
+ENV S6_SYNC_DISKS=1
+
 # Run the s6 init process on entry.
 ENTRYPOINT [ "/init" ]
 
