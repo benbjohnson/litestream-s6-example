@@ -15,8 +15,8 @@ RUN --mount=type=cache,target=/root/.cache/go-build \
 
 # Download the static build of Litestream directly into the path & make it executable.
 # This is done in the builder and copied as the chmod doubles the size.
-ADD https://github.com/benbjohnson/litestream/releases/download/v0.3.4-alpha19/litestream-v0.3.4-alpha19-linux-amd64-static /usr/local/bin/litestream
-RUN chmod +x /usr/local/bin/litestream
+ADD https://github.com/benbjohnson/litestream/releases/download/v0.3.4-rc0/litestream-v0.3.4-rc0-linux-amd64-static.tar.gz /tmp/litestream.tar.gz
+RUN tar -C /usr/local/bin -xzf /tmp/litestream.tar.gz
 
 # Download the s6-overlay for process supervision.
 # This is done in the builder to reduce the final build size.

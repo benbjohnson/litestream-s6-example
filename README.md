@@ -47,8 +47,8 @@ repository to your appropriate object store.
 You'll also need to set your object store credentials in your shell environment:
 
 ```sh
-export AWS_ACCESS_KEY_ID=XXX
-export AWS_SECRET_ACCESS_KEY=XXX
+export LITESTREAM_ACCESS_KEY_ID=XXX
+export LITESTREAM_SECRET_ACCESS_KEY=XXX
 ```
 
 
@@ -68,8 +68,8 @@ docker run \
   -p 8080:8080 \
   -v ${PWD}:/data \
   -e REPLICA_URL=s3://YOURBUCKETNAME/db \
-  -e AWS_ACCESS_KEY_ID \
-  -e AWS_SECRET_ACCESS_KEY \
+  -e LITESTREAM_ACCESS_KEY_ID \
+  -e LITESTREAM_SECRET_ACCESS_KEY \
   myapp
 ```
 
@@ -85,8 +85,10 @@ Let's break down the options one-by-one:
   used by the startup script to restore the database from a replica if it
   doesn't exist and it is used in the Litestream configuration file.
 
-- `-e AWS_ACCESS_KEY_ID` & `-e AWS_SECRET_ACCESS_KEY`—passes through your
-  current environment variables for your S3 credentials to the container.
+- `-e LITESTREAM_ACCESS_KEY_ID` & `-e LITESTREAM_SECRET_ACCESS_KEY`—passes
+  through your current environment variables for your S3 credentials to the
+  container. You can also use `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
+  instead.
 
 
 ### Testing it out
