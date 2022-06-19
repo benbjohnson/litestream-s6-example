@@ -1,4 +1,4 @@
-#!/usr/bin/with-contenv bash
+#!/command/with-contenv bash
 
 : ${REPLICA_URL?"Need to set REPLICA_URL environment variable"}
 

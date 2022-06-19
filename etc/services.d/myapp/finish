@@ -1,4 +1,4 @@
-#!/usr/bin/execlineb -S0
+#!/command/execlineb -S0
 
 # Stops all services when "myapp" stops.
-s6-svscanctl -t /var/run/s6/services
+/run/s6/basedir/bin/halt
