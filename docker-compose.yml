@@ -1,0 +1,21 @@
+version: "3.9"
+services:
+  myapp:
+    build: .
+    environment:
+      - REPLICA_URL=sftp://litestream:litestream@storage/upload/db
+      - S6_BEHAVIOUR_IF_STAGE2_FAILS=2
+    ports:
+      - "8080:8080"
+    depends_on:
+      storage:
+        condition: service_healthy
+  storage:
+    image: atmoz/sftp:alpine
+    volumes:
+      - ./data:/home/litestream/upload
+    command: litestream:litestream:1001
+    healthcheck:
+      test: "netstat -ln | grep :22"
+      interval: 1s
+      retries: 10
