@@ -58,3 +58,6 @@ ENV S6_SYNC_DISKS=1
 # Run the s6 init process on entry.
 ENTRYPOINT [ "/init" ]
 
+# Run the application within s6 so the images closes when our application does
+CMD [ "myapp", "-dsn", "/data/db" ]
+

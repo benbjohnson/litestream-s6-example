@@ -1,4 +1,0 @@
-#!/command/execlineb -S0
-
-# Stops all services when "myapp" stops.
-/run/s6/basedir/bin/halt
