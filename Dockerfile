@@ -45,7 +45,6 @@ EXPOSE 8080
 
 # Copy s6 init & service definitions.
 COPY etc/s6-overlay /etc/s6-overlay
-COPY etc/services.d /etc/services.d
 
 # Copy Litestream configuration file.
 COPY etc/litestream.yml /etc/litestream.yml
