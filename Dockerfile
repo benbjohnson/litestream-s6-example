@@ -44,7 +44,7 @@ RUN mkdir -p /data
 EXPOSE 8080
 
 # Copy s6 init & service definitions.
-COPY etc/cont-init.d /etc/cont-init.d
+COPY etc/s6-overlay /etc/s6-overlay
 COPY etc/services.d /etc/services.d
 
 # Copy Litestream configuration file.
